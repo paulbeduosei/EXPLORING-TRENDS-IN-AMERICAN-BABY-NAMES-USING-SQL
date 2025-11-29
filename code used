@@ -1,0 +1,42 @@
+-- Run this code to view the data in baby_names
+SELECT
+*
+FROM baby_names
+LIMIT 5;
+
+-- List the overall top five names in alphabetical order and find out if each name is "Classic" or "Trendy."
+SELECT
+	first_name,
+	SUM(num),
+	CASE WHEN COUNT(first_name) >= 50 THEN 'Classic'
+	ELSE 'Trendy' END AS popularity_type
+FROM baby_names
+GROUP BY first_name
+ORDER BY first_name ASC
+LIMIT 5;
+
+-- What were the top 20 male names overall, and how did the name Paul rank?
+SELECT 
+		RANK() OVER ( ORDER BY SUM(num) DESC) AS name_rank,
+		first_name,
+		SUM(num) AS sum
+FROM baby_names
+WHERE sex = 'M'
+GROUP BY first_name
+LIMIT 20;
+
+-- a_names
+WITH sex AS (
+SELECT
+	year,
+	first_name,
+	SUM(num) AS total_occurrences
+FROM baby_names
+WHERE sex = 'F'
+GROUP BY year, first_name
+)
+SELECT 
+	first_name,
+	total_occurrences
+FROM sex
+WHERE year = 1920 OR year = 2020;
